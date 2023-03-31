@@ -194,71 +194,71 @@ def request_PSCH3A(addr1, fLog):
 
 
 
+def main():
+    ser = serial.Serial('COM3')
 
 ser = serial.Serial('COM3')
 
-print(ser.isOpen())
+
+    sWorkDir = 'C:\\Apps\\'
+    sLogFileName = sWorkDir+'Logs\\electra_'+time.strftime("%Y%m%d", time.localtime())+'.log'
+    sUpdFileName = sWorkDir+'Logs\\electra_'+time.strftime("%Y%m%d", time.localtime())+'.upd'
+    sDevicesFileName = sWorkDir+'devices.txt'
 
 
-sWorkDir = 'C:\\Apps\\'
-sLogFileName = sWorkDir+'Logs\\electra_'+time.strftime("%Y%m%d", time.localtime())+'.log'
-sUpdFileName = sWorkDir+'Logs\\electra_'+time.strftime("%Y%m%d", time.localtime())+'.upd'
-sDevicesFileName = sWorkDir+'devices.txt'
+    fLog = ''
+    fLog = open(sLogFileName, 'a')
+
+    with open(sDevicesFileName, 'r') as f:
+        for line1 in f:
+            aValues = line1.split('\t')
+            nDeviceAddr = int( aValues[0].strip() )
+            sProtocol = aValues[1].strip()
+            #print(str(nDeviceAddr)+'='+sProtocol)
+            if sProtocol=='MERK':
+                WriteToLog(fLog, 'INFO: '+'Reading '+sProtocol+' device at '+str(nDeviceAddr))
+                request_MERK(nDeviceAddr, fLog)
+            elif sProtocol=='PSCH3A':
+                WriteToLog(fLog, 'INFO: '+'Reading '+sProtocol+' device at '+str(nDeviceAddr))
+                request_PSCH3A(nDeviceAddr, fLog)
+            elif sProtocol=='PSCH_2':
+                WriteToLog(fLog, 'INFO: '+'Reading '+sProtocol+' device at '+str(nDeviceAddr))
+                request_PSCH_2(nDeviceAddr, fLog)
+
+    ser.close()
 
 
-fLog = ''
-fLog = open(sLogFileName, 'a')
+    ser = serial.Serial( port='COM3', baudrate=9600, parity=serial.PARITY_ODD )
 
-with open(sDevicesFileName, 'r') as f:
-    for line1 in f:
-        aValues = line1.split('\t')
-        nDeviceAddr = int( aValues[0].strip() )
-        sProtocol = aValues[1].strip()
-        #print(str(nDeviceAddr)+'='+sProtocol)
-        if sProtocol=='MERK':
-            WriteToLog(fLog, 'INFO: '+'Reading '+sProtocol+' device at '+str(nDeviceAddr))
-            request_MERK(nDeviceAddr, fLog)
-        elif sProtocol=='PSCH3A':
-            WriteToLog(fLog, 'INFO: '+'Reading '+sProtocol+' device at '+str(nDeviceAddr))
-            request_PSCH3A(nDeviceAddr, fLog)
-        elif sProtocol=='PSCH_2':
-            WriteToLog(fLog, 'INFO: '+'Reading '+sProtocol+' device at '+str(nDeviceAddr))
-            request_PSCH_2(nDeviceAddr, fLog)
-
-ser.close()
-
-
-ser = serial.Serial( port='COM3', baudrate=9600, parity=serial.PARITY_ODD )
-
-with open(sDevicesFileName, 'r') as f:
-    for line1 in f:
-        aValues = line1.split('\t')
-        nDeviceAddr = int( aValues[0].strip() )
-        sProtocol = aValues[1].strip()
-        if sProtocol=='PSCH':
-            WriteToLog(fLog, 'INFO: '+'Reading '+sProtocol+' device at '+str(nDeviceAddr))
-            request_PSCH(nDeviceAddr, fLog)
+    with open(sDevicesFileName, 'r') as f:
+        for line1 in f:
+            aValues = line1.split('\t')
+            nDeviceAddr = int( aValues[0].strip() )
+            sProtocol = aValues[1].strip()
+            if sProtocol=='PSCH':
+                WriteToLog(fLog, 'INFO: '+'Reading '+sProtocol+' device at '+str(nDeviceAddr))
+                request_PSCH(nDeviceAddr, fLog)
 
 
 
 
-WriteToLog(fLog, 'Creating upd-flag  '+sUpdFileName)
-with open(sUpdFileName, 'w') as f:
-    f.write(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+    WriteToLog(fLog, 'Creating upd-flag  '+sUpdFileName)
+    with open(sUpdFileName, 'w') as f:
+        f.write(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 
-WriteToLog(fLog, 'Finish')
+    WriteToLog(fLog, 'Finish')
 
-fLog.close()
-
-
-#exit()
+    fLog.close()
 
 
-sCopyPath = '\\\\192.168.2.8\\stolbshared\\electra\\'
-aFilesToCopy = [sLogFileName, sUpdFileName, sDevicesFileName, sys.argv[0]]
-for sFile1 in aFilesToCopy:
-    shutil.copyfile(sFile1, sCopyPath+sFile1.split('\\')[-1])
+
+    sCopyPath = '\\\\192.168.2.8\\stolbshared\\electra\\'
+    aFilesToCopy = [sLogFileName, sUpdFileName, sDevicesFileName, sys.argv[0]]
+    for sFile1 in aFilesToCopy:
+        shutil.copyfile(sFile1, sCopyPath+sFile1.split('\\')[-1])
 
 
+if __name__=="__MAIN__":
+    main()
 exit()
 
