@@ -197,7 +197,7 @@ def request_PSCH3A(addr1, fLog):
 def main():
     ser = serial.Serial('COM3')
 
-ser = serial.Serial('COM3')
+    print(ser.isOpen())
 
 
     sWorkDir = 'C:\\Apps\\'
